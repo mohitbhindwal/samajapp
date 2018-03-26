@@ -471,12 +471,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             map.put("address",address.getText().toString().trim());
             map.put("city",city.getText().toString().trim());
             map.put("password",password.getText().toString().trim());
-            map.put("moto","registeruser");
+            map.put("method","registeruser");
             map.put("dob",dateView.getText());
 
             String picid = "";
-
-
                tvStatus.setText("Uploading..." + selectedPath);
                Log.e("Selected Path",selectedPath);
                picid = FileUploadUtility.doFileUpload(selectedPath, handler);
@@ -494,8 +492,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
 
 
-       user.setName(userid.getText().toString().trim());
-            user.setEmail(username.getText().toString().trim());
+       user.setUsername(userid.getText().toString().trim());
+            user.setContactno(username.getText().toString().trim());
             user.setPassword(address.getText().toString().trim());
 
        //     databaseHelper.addUser(user);
@@ -515,9 +513,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     static String SERVER_PATH = "http://openapp-bhawsarapp.1d35.starter-us-east-1.openshiftapps.com/request";
-
-
-
 
     /**
      * This method is to empty all input edit text

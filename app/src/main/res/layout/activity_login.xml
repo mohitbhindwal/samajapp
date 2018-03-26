@@ -34,7 +34,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/mobile_no"
-                android:inputType="text"
+                android:inputType="phone"
                 android:maxLines="1"
                 android:textColor="@android:color/white" />
         </android.support.design.widget.TextInputLayout>

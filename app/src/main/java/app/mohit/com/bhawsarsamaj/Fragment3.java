@@ -2,12 +2,15 @@ package app.mohit.com.bhawsarsamaj;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 
 import android.os.Bundle;
@@ -16,6 +19,12 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
 import android.widget.ListView;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import app.mohit.com.bhawsarsamaj.model.User;
+import app.mohit.com.bhawsarsamaj.util.ServerUtil;
 
 public class Fragment3 extends Fragment {
 
@@ -46,14 +55,26 @@ public class Fragment3 extends Fragment {
      @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     if (mListener != null) {
-            mListener.onFragmentInteraction("Fragment 3");
+            mListener.onFragmentInteraction("Search");
         }
         return inflater.inflate(R.layout.listview_main, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+
+        int SDK_INT = android.os.Build.VERSION.SDK_INT;
+        if (SDK_INT > 8)
+        {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                    .permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+            //your codes here
+
+        }
+
         super.onViewCreated(view, savedInstanceState);
+
 
 
         // Generate sample data
@@ -84,7 +105,18 @@ public class Fragment3 extends Fragment {
         }
 
         // Pass results to ListViewAdapter Class
-        adapter = new ListViewAdapter(getActivity().getApplicationContext(), arraylist);
+   //m     adapter = new ListViewAdapter(getActivity().getApplicationContext(), arraylist);
+
+        while(MainActivity.userlist.size() <= 0){
+            try {
+                Thread.sleep(1000L);
+            }catch (InterruptedException e){
+                Log.e("Error","Thread interupt",e);
+            }
+        }
+
+
+        adapter = new ListViewAdapter(getActivity().getApplicationContext(), MainActivity.userlist);
 
         // Binds the Adapter to the ListView
         list.setAdapter(adapter);

@@ -3,6 +3,7 @@ package app.mohit.com.bhawsarsamaj;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -15,10 +16,22 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import app.mohit.com.bhawsarsamaj.model.User;
+import app.mohit.com.bhawsarsamaj.util.ServerUtil;
+
 public class MainActivity extends AppCompatActivity
         implements  Fragment1.OnFragmentInteractionListener,
         Fragment2.OnFragmentInteractionListener,
         Fragment3.OnFragmentInteractionListener,NavigationView.OnNavigationItemSelectedListener,Tab1.OnFragmentInteractionListener,Tab2.OnFragmentInteractionListener  {
+
+        public static ArrayList<User> userlist = new ArrayList<User>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +39,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        onLoad();
 
      /*   FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -54,6 +68,38 @@ public class MainActivity extends AppCompatActivity
         ft.replace(R.id.mainFrame, new Fragment1());
         ft.commit();
 
+    }
+
+
+    void onLoad()
+    {
+        new Thread(){
+            @Override
+            public void run() {
+        HashMap map = new HashMap();
+        map.put("method","getAllUsers");
+        map.put("query","select * from users");
+        String json =  ServerUtil.getResponseFromServerSync(map);
+        try {
+            String name;
+            JSONArray array = new JSONArray(json);
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject row = array.getJSONObject(i);
+                User user = new User(row.getString("profileid"));
+                user.setUserid(row.getString("id"));
+                user.setUsername(row.getString("username"));
+                user.setContactno(row.getString("userid"));
+                user.setCity(row.getString("city"));
+                user.setAddress(row.getString("address"));
+                user.setProfileid(row.getLong("profileid"));
+                userlist.add(user);
+            }
+        }catch (Exception e) {
+            Log.e("Json Error","error "+e.getMessage());
+        }
+        Log.e("YAHOO","Response "+json);
+            }
+        }.start();
     }
 
     @Override

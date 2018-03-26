@@ -1,11 +1,14 @@
 package app.mohit.com.bhawsarsamaj;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,20 +17,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.view.View.OnClickListener;
 
+import app.mohit.com.bhawsarsamaj.model.User;
+import app.mohit.com.bhawsarsamaj.util.ServerUtil;
+
 public class ListViewAdapter extends BaseAdapter {
 
 	// Declare Variables
 	Context mContext;
 	LayoutInflater inflater;
-	private List<WorldPopulation> worldpopulationlist = null;
-	private ArrayList<WorldPopulation> arraylist;
+	private List<User> userlist = null;
+	private ArrayList<User> arraylist;
 
 	public ListViewAdapter(Context context,
-			List<WorldPopulation> worldpopulationlist) {
+			List<User> worldpopulationlist) {
 		mContext = context;
-		this.worldpopulationlist = worldpopulationlist;
+		this.userlist = worldpopulationlist;
 		inflater = LayoutInflater.from(mContext);
-		this.arraylist = new ArrayList<WorldPopulation>();
+		this.arraylist = new ArrayList<User>();
 		this.arraylist.addAll(worldpopulationlist);
 	}
 
@@ -40,12 +46,12 @@ public class ListViewAdapter extends BaseAdapter {
 
 	@Override
 	public int getCount() {
-		return worldpopulationlist.size();
+		return userlist.size();
 	}
 
 	@Override
-	public WorldPopulation getItem(int position) {
-		return worldpopulationlist.get(position);
+	public User getItem(int position) {
+		return userlist.get(position);
 	}
 
 	@Override
@@ -69,13 +75,28 @@ public class ListViewAdapter extends BaseAdapter {
 			holder = (ViewHolder) view.getTag();
 		}
 		// Set the results into TextViews
-		holder.rank.setText(worldpopulationlist.get(position).getRank());
-		holder.country.setText(worldpopulationlist.get(position).getCountry());
-		holder.population.setText(worldpopulationlist.get(position)
-				.getPopulation());
+		holder.rank.setText(userlist.get(position).getUsername());
+		holder.country.setText(userlist.get(position).getContactno());
+		holder.population.setText(userlist.get(position)
+				.getAddress());
 		// Set the results into ImageView
-		holder.flag.setImageResource(worldpopulationlist.get(position)
-				.getFlag());
+	 //    holder.flag.setImageResource(userlist.get(position).getFlag());
+
+	/*	HashMap map = new HashMap();
+		map.put("method","downloadImage");
+		map.put("imageid",userlist.get(position).getProfileid());
+
+		Long start = System.currentTimeMillis();
+		Bitmap bitmap =  ServerUtil.getImageFromServer(map);
+
+			Long end = System.currentTimeMillis();
+
+		Log.e("start #########",    ((end-start)/1000)+ " sec.");
+
+*/
+
+		holder.flag.setImageBitmap(userlist.get(position).getBitmap());
+
 		// Listen for ListView Item Click
 		view.setOnClickListener(new OnClickListener() {
 
@@ -84,17 +105,16 @@ public class ListViewAdapter extends BaseAdapter {
 				// Send single item click data to SingleItemView Class
 				Intent intent = new Intent(mContext, SingleItemView.class);
 				// Pass all data rank
-				intent.putExtra("rank",
-						(worldpopulationlist.get(position).getRank()));
+				intent.putExtra("name",
+						(userlist.get(position).getUsername()));
 				// Pass all data country
-				intent.putExtra("country",
-						(worldpopulationlist.get(position).getCountry()));
+				intent.putExtra("contactno",
+						(userlist.get(position).getContactno()));
 				// Pass all data population
-				intent.putExtra("population",
-						(worldpopulationlist.get(position).getPopulation()));
+				intent.putExtra("address",
+						(userlist.get(position).getAddress()));
 				// Pass all data flag
-				intent.putExtra("flag",
-						(worldpopulationlist.get(position).getFlag()));
+	 			intent.putExtra("flag",(userlist.get(position).getProfileid()));
 				// Start SingleItemView Class
 				mContext.startActivity(intent);
 			}
@@ -106,14 +126,14 @@ public class ListViewAdapter extends BaseAdapter {
 	// Filter Class
 	public void filter(String charText) {
 		charText = charText.toLowerCase(Locale.getDefault());
-		worldpopulationlist.clear();
+		userlist.clear();
 		if (charText.length() == 0) {
-			worldpopulationlist.addAll(arraylist);
+			userlist.addAll(arraylist);
 		} else {
-			for (WorldPopulation wp : arraylist) {
-				if (wp.getCountry().toLowerCase(Locale.getDefault())
+			for (User wp : arraylist) {
+				if (wp.getUsername().toLowerCase(Locale.getDefault())
 						.contains(charText)) {
-					worldpopulationlist.add(wp);
+					userlist.add(wp);
 				}
 			}
 		}

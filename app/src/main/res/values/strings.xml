@@ -36,5 +36,7 @@
     <string name="city">City</string>
     <string name="male">Male</string>
     <string name="female">Female</string>
+    <string name="search">Search</string>
+
 
 </resources>

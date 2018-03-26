@@ -2,6 +2,8 @@ package app.mohit.com.bhawsarsamaj.util;
 
 
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.widget.Toast;
@@ -103,14 +105,14 @@ public class ServerUtil {
                                     sb.append(s);
                                 }
                                 responsestr = sb.toString();
-                                System.out.println(responsestr);
-                                Log.e("myApp=====>", responsestr);
+
+                                Log.e("RESPONSE ASYNC::", responsestr);
                                 buf.close();
                                 ips.close();
                             }
                         }
 
-                        Thread.sleep(10000);
+                //        Thread.sleep(10000);
                     } catch (Throwable e) {
                         e.printStackTrace();
                         Log.e("#######", e.getMessage(), e);
@@ -131,4 +133,113 @@ public class ServerUtil {
     }
 
 
+
+    public static String getResponseFromServerSync(final HashMap map) {
+                 String responsestr = null;
+                System.out.println("==>" + map);
+                Log.e("myApp=====>", map.toString());
+                 HttpClient client = null;
+                if (map.size() > 0) {
+                    ArrayList<NameValuePair> postParameters = new ArrayList<NameValuePair>();
+                    for (Object keys : map.keySet()) {
+                        postParameters.add(new BasicNameValuePair(keys.toString(), map.get(keys).toString()));
+                    }
+                     try {
+                        String responseFromServer = null;
+                        client = new DefaultHttpClient();
+                        HttpPost postRequest = new HttpPost(SERVER_PATH);
+                        postRequest.setEntity(new UrlEncodedFormEntity(postParameters, "UTF-8"));
+                        HttpResponse response;
+                        response = client.execute(postRequest);
+                         if (response != null) {
+                            int code = response.getStatusLine().getStatusCode();
+                            System.out.println(response.getStatusLine().getStatusCode());
+                            if (code == 200) {
+                                InputStream ips = response.getEntity().getContent();
+                                BufferedReader buf = new BufferedReader(new InputStreamReader(ips, "UTF-8"));
+                                StringBuilder sb = new StringBuilder();
+                                String s;
+                                while (true) {
+                                    s = buf.readLine();
+                                    if (s == null || s.length() == 0)
+                                        break;
+                                    sb.append(s);
+                                }
+                                responsestr = sb.toString();
+
+                                Log.e("RESPONSE:", responsestr);
+                                buf.close();
+                                ips.close();
+                            }
+                        }
+                     } catch (Throwable e) {
+                        e.printStackTrace();
+                        Log.e("#######", e.getMessage(), e);
+                    } finally {
+                        client.getConnectionManager().shutdown();
+                    }
+                } else {
+                    Log.e("asd", "emprtyddfdg");
+                    System.out.println("Map is empty");
+                }
+                Log.e("asdadad","asdas"+responsestr);
+         return responsestr;
     }
+
+
+    public static Bitmap getImageFromServer(HashMap map){
+        {
+            String responsestr = null;
+            System.out.println("==>" + map);
+            Log.e("get Image from server", map.toString());
+            HttpClient client = null;
+            InputStream ips = null;
+            if (map.size() > 0) {
+                ArrayList<NameValuePair> postParameters = new ArrayList<NameValuePair>();
+                for (Object keys : map.keySet()) {
+                    postParameters.add(new BasicNameValuePair(keys.toString(), map.get(keys).toString()));
+                }
+                try {
+                    String responseFromServer = null;
+                    client = new DefaultHttpClient();
+                    HttpPost postRequest = new HttpPost(SERVER_PATH);
+
+                    postRequest.setEntity(new UrlEncodedFormEntity(postParameters, "UTF-8"));
+                    HttpResponse response;
+                    response = client.execute(postRequest);
+                    if (response != null) {
+                        int code = response.getStatusLine().getStatusCode();
+                        System.out.println(response.getStatusLine().getStatusCode());
+                        if (code == 200) {
+                            ips = response.getEntity().getContent();
+                            Bitmap myBitmap = BitmapFactory.decodeStream(ips);
+                            return myBitmap;
+                        }
+                    }
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                    Log.e("#######", e.getMessage(), e);
+                } finally {
+                    try {
+                        if (ips != null)
+                            ips.close();
+                    }catch (Exception e ){
+                        e.printStackTrace();
+                    }
+                    client.getConnectionManager().shutdown();
+                }
+            } else {
+                Log.e("asd", "emprtyddfdg");
+                System.out.println("Map is empty");
+            }
+            Log.e("asdadad","asdas"+responsestr);
+            return null;
+        }
+    }
+
+
+
+
+
+
+}
